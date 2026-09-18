@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+
+calculator_data.json
+
+.venv/
+venv/
+
+dist/
+build/
+*.spec
+
+.idea/
+.vscode/
