@@ -6,72 +6,6 @@ from calculator.calculator_engine import (
 )
 
 
-def test_addition():
-    assert calculate_expression("2 + 2") == 4
-
-
-def test_subtraction():
-    assert calculate_expression("10 - 3") == 7
-
-
-def test_multiplication():
-    assert calculate_expression("6 * 4") == 24
-
-
-def test_division():
-    assert calculate_expression("10 / 2") == 5
-
-
-def test_floor_division():
-    assert calculate_expression("10 // 3") == 3
-
-
-def test_modulus():
-    assert calculate_expression("10 % 3") == 1
-
-
-def test_power():
-    assert calculate_expression("2 ** 3") == 8
-
-
-def test_operator_precedence():
-    assert calculate_expression("10 + 5 * 2") == 20
-
-
-def test_parentheses():
-    assert calculate_expression("(10 + 5) * 2") == 30
-
-
-def test_negative_number():
-    assert calculate_expression("-5 + 10") == 5
-
-
-def test_decimal_math():
-    assert calculate_expression("2.5 + 1.5") == 4.0
-
-
-def test_division_by_zero():
-    with pytest.raises(ZeroDivisionError):
-        calculate_expression("10 / 0")
-
-
-def test_invalid_expression():
-    with pytest.raises((ValueError, SyntaxError)):
-        calculate_expression("hello + 5")
-
-
-def test_function_call_is_rejected():
-    with pytest.raises(ValueError):
-        calculate_expression("print('hello')")
-
-
-def test_format_whole_float():
-    assert format_number(10.0) == 10
-
-
-def test_format_decimal():
-    assert format_number(10.5) == 10.5
-
 def test_nested_parentheses():
     assert calculate_expression("((2 + 3) * 4)") == 20
 
@@ -84,9 +18,116 @@ def test_negative_parentheses():
     assert calculate_expression("-(5 + 2)") == -7
 
 
+def test_unary_plus():
+    assert calculate_expression("+5") == 5
+
+
 def test_decimal_division():
     assert calculate_expression("5 / 2") == 2.5
 
-def test_import_is_rejected():
-    with pytest.raises((ValueError, SyntaxError)):
+
+def test_decimal_multiplication():
+    assert calculate_expression("2.5 * 4") == 10.0
+
+
+def test_power_precedence():
+    assert calculate_expression("2 + 3 ** 2") == 11
+
+
+def test_parentheses_override_precedence():
+    assert calculate_expression("(2 + 3) ** 2") == 25
+
+
+def test_floor_division_negative_number():
+    assert calculate_expression("-10 // 3") == -4
+
+
+def test_modulus_negative_number():
+    assert calculate_expression("-10 % 3") == 2
+
+
+def test_empty_expression():
+    with pytest.raises(SyntaxError):
+        calculate_expression("")
+
+
+def test_incomplete_expression():
+    with pytest.raises(SyntaxError):
+        calculate_expression("5 +")
+
+
+def test_double_operator_invalid():
+    with pytest.raises(SyntaxError):
+        calculate_expression("5 + * 2")
+
+
+def test_unknown_name_is_rejected():
+    with pytest.raises(ValueError):
+        calculate_expression("hello")
+
+
+def test_function_call_is_rejected():
+    with pytest.raises(ValueError):
+        calculate_expression("print('hello')")
+
+
+def test_import_call_is_rejected():
+    with pytest.raises(ValueError):
         calculate_expression("__import__('os')")
+
+
+def test_attribute_access_is_rejected():
+    with pytest.raises(ValueError):
+        calculate_expression("(1).__class__")
+
+
+def test_list_is_rejected():
+    with pytest.raises(ValueError):
+        calculate_expression("[1, 2, 3]")
+
+
+def test_dictionary_is_rejected():
+    with pytest.raises(ValueError):
+        calculate_expression("{'a': 1}")
+
+
+def test_comparison_is_rejected():
+    with pytest.raises(ValueError):
+        calculate_expression("5 > 2")
+
+
+def test_boolean_expression_is_rejected():
+    with pytest.raises(ValueError):
+        calculate_expression("True and False")
+
+
+def test_string_is_rejected():
+    with pytest.raises(ValueError):
+        calculate_expression("'hello'")
+
+
+def test_division_by_zero():
+    with pytest.raises(ZeroDivisionError):
+        calculate_expression("10 / 0")
+
+
+def test_floor_division_by_zero():
+    with pytest.raises(ZeroDivisionError):
+        calculate_expression("10 // 0")
+
+
+def test_modulus_by_zero():
+    with pytest.raises(ZeroDivisionError):
+        calculate_expression("10 % 0")
+
+
+def test_format_whole_float():
+    assert format_number(10.0) == 10
+
+
+def test_format_decimal():
+    assert format_number(10.25) == 10.25
+
+
+def test_format_integer():
+    assert format_number(10) == 10
