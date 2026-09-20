@@ -1,7 +1,14 @@
 import ast
 import operator
+from collections.abc import Callable
 
-OPERATORS = {
+Number = int | float
+
+
+OPERATORS: dict[
+    type[ast.operator] | type[ast.unaryop],
+    Callable[..., Number],
+] = {
     ast.Add: operator.add,
     ast.Sub: operator.sub,
     ast.Mult: operator.mul,
@@ -14,7 +21,7 @@ OPERATORS = {
 }
 
 
-def evaluate_node(node):
+def evaluate_node(node: ast.AST) -> Number:
     if isinstance(node, ast.Constant):
         if isinstance(node.value, (int, float)):
             return node.value
@@ -25,33 +32,36 @@ def evaluate_node(node):
         left = evaluate_node(node.left)
         right = evaluate_node(node.right)
 
-        operator_type = type(node.op)
+        binary_operator_type = type(node.op)
 
-        if operator_type not in OPERATORS:
+        if binary_operator_type not in OPERATORS:
             raise ValueError("Invalid operator")
 
-        return OPERATORS[operator_type](left, right)
+        return OPERATORS[binary_operator_type](left, right)
 
     if isinstance(node, ast.UnaryOp):
         operand = evaluate_node(node.operand)
 
-        operator_type = type(node.op)
+        unary_operator_type = type(node.op)
 
-        if operator_type not in OPERATORS:
+        if unary_operator_type not in OPERATORS:
             raise ValueError("Invalid operator")
 
-        return OPERATORS[operator_type](operand)
+        return OPERATORS[unary_operator_type](operand)
 
     raise ValueError("Invalid expression")
 
 
-def calculate_expression(expression):
-    tree = ast.parse(expression, mode="eval")
+def calculate_expression(expression: str) -> Number:
+    tree = ast.parse(
+        expression,
+        mode="eval",
+    )
 
     return evaluate_node(tree.body)
 
 
-def format_number(number):
+def format_number(number: Number) -> Number:
     if isinstance(number, float) and number.is_integer():
         return int(number)
 
