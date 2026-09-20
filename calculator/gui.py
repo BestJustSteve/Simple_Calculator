@@ -1,6 +1,7 @@
 import tkinter as tk
 from datetime import datetime
 from tkinter import messagebox, ttk
+from calculator.version import __version__
 
 from calculator.calculator_engine import (
     calculate_expression,
@@ -56,7 +57,9 @@ class CalculatorApp:
 
 
     def configure_window(self):
-        self.root.title("Python Calculator")
+        self.root.title(
+            f"Simple Calculator {__version__}"
+        )
         self.root.geometry("400x660")
         self.root.resizable(False, False)
 
@@ -741,7 +744,20 @@ class CalculatorApp:
                 "Built with tkinter, ttk, JSON, and AST."
             )
         )
-
+    def show_about(self):
+        messagebox.showinfo(
+            "About",
+            (
+                f"Simple Calculator {__version__}\n\n"
+                "Built with Python, tkinter, ttk, JSON, AST, and pytest.\n\n"
+                "Features:\n"
+                "- Safe expression parsing\n"
+                "- Calculation history\n"
+                "- Saved memory values\n"
+                "- Persistent data storage\n"
+                "- Keyboard shortcuts"
+            )
+        )
 
     def create_keyboard_shortcuts(self):
         self.root.bind(

@@ -1,0 +1,1 @@
+from calculator.version import __version__
