@@ -1,14 +1,21 @@
 import json
 import os
 from pathlib import Path
-from typing import Any
+from typing import TypedDict
+
+from calculator.calculator_engine import Number
 
 APP_NAME = "SimpleCalculator"
 
 
-HistoryEntry = dict[str, Any]
+class HistoryEntry(TypedDict):
+    timestamp: str
+    expression: str
+    result: Number
+
+
 History = list[HistoryEntry]
-Memory = dict[str, int | float]
+Memory = dict[str, Number]
 
 
 def get_data_file() -> Path:

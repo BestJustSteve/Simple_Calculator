@@ -128,3 +128,34 @@ def test_format_decimal():
 
 def test_format_integer():
     assert format_number(10) == 10
+
+
+def test_large_power():
+    assert calculate_expression("2 ** 10") == 1024
+
+
+def test_whitespace_expression():
+    assert calculate_expression("  10 + 5  ") == 15
+
+
+def test_nested_unary_minus():
+    assert calculate_expression("--5") == 5
+
+
+def test_fractional_power():
+    assert calculate_expression("9 ** 0.5") == 3.0
+
+
+def test_complex_result_is_not_supported():
+    with pytest.raises(TypeError):
+        calculate_expression("(-1) ** 0.5")
+
+
+def test_unsupported_binary_operator_is_rejected():
+    with pytest.raises(ValueError, match="Invalid operator"):
+        calculate_expression("1 << 2")
+
+
+def test_unsupported_unary_operator_is_rejected():
+    with pytest.raises(ValueError, match="Invalid operator"):
+        calculate_expression("~5")

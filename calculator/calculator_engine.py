@@ -53,12 +53,19 @@ def evaluate_node(node: ast.AST) -> Number:
 
 
 def calculate_expression(expression: str) -> Number:
+    expression = expression.strip()
+
     tree = ast.parse(
         expression,
         mode="eval",
     )
 
-    return evaluate_node(tree.body)
+    result = evaluate_node(tree.body)
+
+    if isinstance(result, complex):
+        raise TypeError("Complex numbers are not supported")
+
+    return result
 
 
 def format_number(number: Number) -> Number:

@@ -8,8 +8,15 @@ from calculator.calculator_engine import (
     calculate_expression,
     format_number,
 )
+from calculator.gui_helpers import (
+    append_to_display,
+    backspace_display,
+    build_history_text,
+    format_memory_value,
+)
 from calculator.storage import (
     History,
+    HistoryEntry,
     Memory,
     load_data,
     save_data,
@@ -308,7 +315,12 @@ class CalculatorApp:
     def button_click(self, value: str) -> None:
         current = self.display_var.get()
 
-        self.display_var.set(current + value)
+        self.display_var.set(
+            append_to_display(
+                current,
+                value,
+            )
+        )
 
     def clear_display(self) -> None:
         self.display_var.set("")
@@ -317,7 +329,7 @@ class CalculatorApp:
     def backspace(self) -> None:
         current = self.display_var.get()
 
-        self.display_var.set(current[:-1])
+        self.display_var.set(backspace_display(current))
 
     def calculate(self) -> None:
         expression = self.display_var.get().strip()
@@ -336,7 +348,7 @@ class CalculatorApp:
 
             self.last_result = result
 
-            history_entry = {
+            history_entry: HistoryEntry = {
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "expression": expression,
                 "result": result,
@@ -414,22 +426,10 @@ class CalculatorApp:
             expand=True,
         )
 
-        if not self.history:
-            history_box.insert(
-                tk.END,
-                "No calculations in history.",
-            )
-
-        else:
-            for entry in self.history:
-                history_box.insert(
-                    tk.END,
-                    (
-                        f"{entry['timestamp']} | "
-                        f"{entry['expression']} = "
-                        f"{format_number(entry['result'])}\n"
-                    ),
-                )
+        history_box.insert(
+            tk.END,
+            build_history_text(self.history),
+        )
 
         history_box.config(
             state="disabled",
@@ -584,7 +584,10 @@ class CalculatorApp:
 
             ttk.Label(
                 row,
-                text=(f"{name} = {format_number(value)}"),
+                text=format_memory_value(
+                    name,
+                    value,
+                ),
             ).pack(
                 side="left",
                 fill="x",
