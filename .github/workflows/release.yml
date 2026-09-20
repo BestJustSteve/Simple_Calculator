@@ -1,0 +1,59 @@
+name: Build Windows Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pyinstaller
+
+      - name: Run Ruff
+        run: |
+          python -m ruff check .
+
+      - name: Run mypy
+        run: |
+          python -m mypy calculator
+
+      - name: Run tests
+        run: |
+          python -m pytest --cov=calculator --cov-report=term-missing
+
+      - name: Build Windows executable
+        run: |
+          python -m PyInstaller --onefile --windowed --name SimpleCalculator main.py
+
+      - name: Rename executable
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}"
+          Rename-Item `
+            "dist\SimpleCalculator.exe" `
+            "SimpleCalculator-$version.exe"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/SimpleCalculator-${{ github.ref_name }}.exe
+          generate_release_notes: true
