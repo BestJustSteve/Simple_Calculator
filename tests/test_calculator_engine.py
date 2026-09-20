@@ -1,9 +1,6 @@
 import pytest
 
-from calculator.calculator_engine import (
-    calculate_expression,
-    format_number
-)
+from calculator.calculator_engine import calculate_expression, format_number
 
 
 def test_nested_parentheses():

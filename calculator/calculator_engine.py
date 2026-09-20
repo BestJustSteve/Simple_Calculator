@@ -1,7 +1,6 @@
 import ast
 import operator
 
-
 OPERATORS = {
     ast.Add: operator.add,
     ast.Sub: operator.sub,
@@ -47,10 +46,7 @@ def evaluate_node(node):
 
 
 def calculate_expression(expression):
-    tree = ast.parse(
-        expression,
-        mode="eval"
-    )
+    tree = ast.parse(expression, mode="eval")
 
     return evaluate_node(tree.body)
 
